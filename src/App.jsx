@@ -1,35 +1,45 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./App.css";
+import { useEffect, useState } from "react";
+import { Input } from "postcss";
 
-function App() {
-  const [count, setCount] = useState(0)
+//http://api.weatherapi.com/v1/current.json?key=322a0617d0f64b01bc6164300232905&q=London
+//http://api.weatherapi.com/v1/forecast.json?key=322a0617d0f64b01bc6164300232905&q=London&days=7
+
+export default function App() {
+  const [forecastWeather, setForecastWeather] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    getWeatherData();..
+  }, []);
+  const getWeatherData = () => {
+    const forecastWeatherData = fetch(
+      `http://api.weatherapi.com/v1/forecast.json?key=322a0617d0f64b01bc6164300232905&q=07112&days=7`
+    );
+
+    Promise.all([forecastWeatherData])
+      .then(async (response) => {
+        const forecastWeatherResponse = await response[0].json();
+
+        setForecastWeather(forecastWeatherResponse);
+      })
+      .catch((error) => {
+        console.log(error);
+        setError(error);
+      });
+  };
+
+  console.log("Forecast Weahter:", forecastWeather);
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      {forecastWeather && (
+        <div>
+          <p>{forecastWeather.location.name}</p>
+          <p>{forecastWeather.current.temp_c}</p>
+          <p>{forecastWeather.current.wind_dir}</p>
+        </div>
+      )}
     </>
-  )
+  );
 }
-
-export default App
